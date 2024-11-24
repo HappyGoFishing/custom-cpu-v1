@@ -37,7 +37,9 @@
 | r6    | General purpose register                        | 00111       |
 | r7    | General purpose register                        | 01000       |
 
-### Keywords used in this diagram and their corresponding values
+### Useful details and information
+
+All immediate values are 32bits in length and can be s32 or u32
 
 | KEY   | VALUE                              |
 |-------|------------------------------------|

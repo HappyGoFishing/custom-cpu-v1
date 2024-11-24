@@ -1,6 +1,24 @@
 import sys, os
 
-# Capitalized opcodes and regcodes
+instruction_lengths = {
+    "H": 5,              # Only the opcode (5 bits).
+    "LI": 42,            # Opcode (5) + $DR (5) + Immediate (32).
+    "LR": 15,            # Opcode (5) + $DR (5) + RX (5).
+    "J": 37,             # Opcode (5) + $LINE (32).
+    "JE": 101,           # Opcode (5) + $LINE (32) + A (32) + B (32).
+    "JNE": 101,          # Opcode (5) + $LINE (32) + A (32) + B (32).
+    "JL": 101,           # Opcode (5) + $LINE (32) + A (32) + B (32).
+    "JG": 101,           # Opcode (5) + $LINE (32) + A (32) + B (32).
+    "ADDR": 20,          # Opcode (5) + $DR (5) + RX (5) + RY (5).
+    "ADDI": 47,          # Opcode (5) + $DR (5) + RX (5) + Immediate (32).
+    "SUBR": 20,          # Opcode (5) + $DR (5) + RX (5) + RY (5).
+    "SUBI": 47,          # Opcode (5) + $DR (5) + RX (5) + Immediate (32).
+    "MULR": 20,          # Opcode (5) + $DR (5) + RX (5) + RY (5).
+    "MULI": 47,          # Opcode (5) + $DR (5) + RX (5) + Immediate (32).
+    "DIVR": 20,          # Opcode (5) + $DR (5) + RX (5) + RY (5).
+    "DIVI": 47,          # Opcode (5) + $DR (5) + RX (5) + Immediate (32).
+}
+
 op_codes = {
     "H"    : "00000",
     "LI"   : "00001",
@@ -32,17 +50,33 @@ reg_codes = {
     "R7": "01000",
 }
 
+def int_to_le_32(num, sign) -> str: #turn regular int into a little endian s32 binary string
+    # make sure number is valid s32 or u32
+    if sign:
+        if not (-2147483648 <= num <= 2147483647):
+            raise ValueError(f"{num} out of range for s32")
+    else:
+        if not (0 <= num <= 4294967295):
+            raise ValueError(f"{num} out of range for u32")
+    
+    little_endian_bytes = num.to_bytes(4, byteorder='little', signed=sign)
+    binary_string = ''.join(f'{byte:08b}' for byte in little_endian_bytes)
+    return binary_string
+
+
 if __name__ == "__main__":
-
-    with open(sys.argv[1], "r") as sourcefile:
-        sourcecode = sourcefile.read().strip()
-
+    if len(sys.argv) > 1:
+        with open(sys.argv[1], "r") as sourcefile:
+            sourcecode = sourcefile.read().strip()
+    else:
+        print("no source file provided")
+        sys.exit(0)
     instructions = sourcecode.split("\n")
     outbuffer = []
 
     for line_num, line in enumerate(instructions):
         tokens = line.split()
-        opcode = tokens[0].upper()  # Convert opcode to uppercase to match the dictionary
+        opcode = tokens[0].upper()  
 
         if opcode in op_codes:
             outbuffer.append(op_codes[opcode])
@@ -56,17 +90,18 @@ if __name__ == "__main__":
             
             case "LI":
                 if len(tokens) == 3:
-                    dest = tokens[1].upper()  # Convert register to uppercase
-                    outbuffer[line_num] += reg_codes[dest]
+                    pass
             
             case "LR":
                 if len(tokens) == 3:
-                    dest = tokens[1].upper()
-                    reg = tokens[2].upper()
-                    outbuffer[line_num] += reg_codes[dest] + reg_codes[reg]
+                    pass
+                
                     
-            case "J": 
-                pass
+            case "J":
+                if len(tokens) == 2:
+                    pass
+
+                    
             case "JE": 
                 pass
             case "JNE": 
@@ -101,8 +136,8 @@ if __name__ == "__main__":
 
 
 if len(sys.argv) > 2: 
-    output_bintxt_name = sys.argv[2] + ".bin.txt"
-    output_bin_name = sys.argv[2] + ".bin"
+    output_bintxt_name = os.path.splitext(sys.argv[2])[0] + ".bin.txt"
+    output_bin_name = os.path.splitext(sys.argv[2])[0] + ".bin"
 else:
     output_bintxt_name = os.path.splitext(sys.argv[1])[0] + ".bin.txt"
     output_bin_name = os.path.splitext(sys.argv[1])[0] + ".bin"
@@ -111,3 +146,7 @@ print(f"output file (text-readable) {output_bintxt_name}")
 with open(output_bintxt_name, "w") as fb:
     fb.write("".join(outbuffer))
     
+
+
+print(int_to_le_32(-16, sign=True))
+print(int_to_le_32(16, sign=False))

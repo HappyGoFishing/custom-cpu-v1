@@ -1,4 +1,4 @@
-import sys
+import sys, os
 
 # Capitalized opcodes and regcodes
 op_codes = {
@@ -99,12 +99,15 @@ if __name__ == "__main__":
     for line_num, line in enumerate(outbuffer):
         print(f"(line {line_num + 1}): {line}: \"{instructions[line_num].upper()}\"")
 
-outfile = str()
 
 if len(sys.argv) > 2: 
-    outfile = sys.argv[2]
+    output_bintxt_name = sys.argv[2] + ".bin.txt"
+    output_bin_name = sys.argv[2] + ".bin"
 else:
-    outfile = "as_out"
-
-with open(outfile, "w") as fb:
+    output_bintxt_name = os.path.splitext(sys.argv[1])[0] + ".bin.txt"
+    output_bin_name = os.path.splitext(sys.argv[1])[0] + ".bin"
+    
+print(f"output file (text-readable) {output_bintxt_name}")
+with open(output_bintxt_name, "w") as fb:
     fb.write("".join(outbuffer))
+    

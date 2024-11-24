@@ -1,4 +1,4 @@
-# My custom toy CPU architecture. (with assembler and emulator to come)
+# My first attempt at a custom CPU architecture, assembler, and emulator.
 
 ## CPU Instruction Set
 

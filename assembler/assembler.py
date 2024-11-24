@@ -5,10 +5,10 @@ instruction_lengths = {
     "LI": 42,            # Opcode (5) + $DR (5) + Immediate (32).
     "LR": 15,            # Opcode (5) + $DR (5) + RX (5).
     "J": 37,             # Opcode (5) + $LINE (32).
-    "JE": 101,           # Opcode (5) + $LINE (32) + A (32) + B (32).
-    "JNE": 101,          # Opcode (5) + $LINE (32) + A (32) + B (32).
-    "JL": 101,           # Opcode (5) + $LINE (32) + A (32) + B (32).
-    "JG": 101,           # Opcode (5) + $LINE (32) + A (32) + B (32).
+    "JE": 47,            # Opcode (5) + $LINE (32) + RX(5) + RY(5)
+    "JNE": 47,           # Opcode (5) + $LINE (32) + RX(5) + RY(5)
+    "JL": 47,            # Opcode (5) + $LINE (32) + RX(5) + RY(5)
+    "JG": 47,            # Opcode (5) + $LINE (32) + RX(5) + RY(5)
     "ADDR": 20,          # Opcode (5) + $DR (5) + RX (5) + RY (5).
     "ADDI": 47,          # Opcode (5) + $DR (5) + RX (5) + Immediate (32).
     "SUBR": 20,          # Opcode (5) + $DR (5) + RX (5) + RY (5).
@@ -78,38 +78,52 @@ if __name__ == "__main__":
         tokens = line.split()
         opcode = tokens[0].upper()  
 
-        if opcode in op_codes:
-            outbuffer.append(op_codes[opcode])
-        else:
-            print(f"ERROR: unknown opcode \"{opcode}\", failed to assemble (line {line_num + 1})")
-            sys.exit(1)
-        
         match opcode:
             case "H": 
-                pass
+                outbuffer.append(op_codes["H"])
             
             case "LI":
                 if len(tokens) == 3:
-                    pass
-            
+                    reg_code = reg_codes[tokens[1].upper()]
+                    imval = int_to_le_32(int(tokens[2]), sign=True) 
+                    outbuffer.append(f"{op_codes[opcode]}{reg_code}{imval}")
+                    
+                    
             case "LR":
                 if len(tokens) == 3:
-                    pass
+                    destreg = reg_codes[tokens[1].upper()]
+                    srcreg = reg_codes[tokens[2].upper()]
+                    outbuffer.append(f"{op_codes[opcode]}{destreg}{srcreg}")
                 
-                    
             case "J":
                 if len(tokens) == 2:
-                    pass
+                    ln = int_to_le_32(int(tokens[1]), sign=False)
+                    outbuffer.append(f"{op_codes[opcode]}{ln}")
 
-                    
             case "JE": 
-                pass
-            case "JNE": 
-                pass
+                if len(tokens) == 4:
+                    ln = int_to_le_32(int(tokens[1]), sign=False)
+                    rx = reg_codes[tokens[2].upper()]
+                    ry = reg_codes[tokens[3].upper()]
+                    outbuffer.append(f"{op_codes[opcode]}{rx}{ry}")
+            case "JNE":
+                if len(tokens) == 4:
+                    ln = int_to_le_32(int(tokens[1]), sign=False)
+                    rx = reg_codes[tokens[2].upper()]
+                    ry = reg_codes[tokens[3].upper()]
+                    outbuffer.append(f"{op_codes[opcode]}{rx}{ry}")                
             case "JL": 
-                pass
+                if len(tokens) == 4:
+                    ln = int_to_le_32(int(tokens[1]), sign=False)
+                    rx = reg_codes[tokens[2].upper()]
+                    ry = reg_codes[tokens[3].upper()]
+                    outbuffer.append(f"{op_codes[opcode]}{rx}{ry}")
             case "JG": 
-                pass
+                if len(tokens) == 4:
+                    ln = int_to_le_32(int(tokens[1]), sign=False)
+                    rx = reg_codes[tokens[2].upper()]
+                    ry = reg_codes[tokens[3].upper()]
+                    outbuffer.append(f"{op_codes[opcode]}{rx}{ry}")
             case "ADDR": 
                 pass
             case "ADDI": 
@@ -145,8 +159,3 @@ else:
 print(f"output file (text-readable) {output_bintxt_name}")
 with open(output_bintxt_name, "w") as fb:
     fb.write("".join(outbuffer))
-    
-
-
-print(int_to_le_32(-16, sign=True))
-print(int_to_le_32(16, sign=False))

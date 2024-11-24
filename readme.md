@@ -2,19 +2,19 @@
 
 ## CPU Instruction Set
 
-### Opcodes (5 bits wide)
+### Opcodes (5 bit codes)
 
-| NAME  | DESCRIPTION                                       | USAGE                          | BINARY FORM |
-|-------|---------------------------------------------------|--------------------------------|-------------|
-| H     | Halts the program execution                       | H                              | 00000       |
+| NAME  | DESCRIPTION                                       | USAGE                         | BINARY FORM |
+|-------|---------------------------------------------------|-------------------------------|-------------|
+| H     | Halts the program execution                       | H                             | 00000       |
 | LI    | Load immediate value into $DR                    | LI $DR 16                      | 00001       |
 | LR    | Load register value into $DR                     | MV $DR RX                      | 00010       |
-| J     | Jump unconditionally                              | J $LINE                        | 00011       |
-| JE    | Jump if comparison is equal                       | J $LINE 15 15                  | 00100       |
-| JNE   | Jump if comparison is not equal                   | J $LINE 15 16                  | 00101       |
-| JL    | Jump if comparison is lesser than                 | JL $LINE 1 5                   | 00110       |
-| JG    | Jump if comparison is greater than                | JG $LINE 5 1                   | 00111       |
-| ADDR  | Adds two registers into $DR                       | ADDR $DR RX RY                 | 01000       |
+| J     | Jump unconditionally                              | J $LINE                       | 00011       |
+| JE    | Jump if comparison is equal                       | J $LINE RX RY                 | 00100       |
+| JNE   | Jump if comparison is not equal                   | J $LINE RX RY                 | 00101       |
+| JL    | Jump if comparison is lesser than                 | JL $LINE RX RY                | 00110       |
+| JG    | Jump if comparison is greater than                | JG $LINE RX RY                | 00111       |
+| ADDR  | Adds two registers into $DR                       | ADDR $DR RX RY                | 01000       |
 | ADDI  | Adds immediate and register into $DR             | ADDI $DR RX 15                 | 01001       |
 | SUBR  | Subtracts two registers into $DR                 | SUBR $DR RX RY                 | 01010       |
 | SUBI  | Subtracts immediate from register into $DR       | SUBI $DR RX 15                 | 01011       |
@@ -23,7 +23,7 @@
 | DIVR  | Divides two registers into $DR                   | DIVR $DR RX RY                 | 01110       |
 | DIVI  | Divides register by immediate into $DR           | DIVI $DR RX 15                 | 01111       |
 
-### Registers (5 bits wide)
+### Registers (5 bit codes, 32bit size)
 
 | NAME  | DESCRIPTION                                      | BINARY FORM |
 |-------|--------------------------------------------------|-------------|

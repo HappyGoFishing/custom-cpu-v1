@@ -1,92 +1,110 @@
 import sys
 
+# Capitalized opcodes and regcodes
 op_codes = {
-    "h"    : "00000",
-    "li"   : "00001",
-    "lr"   : "00010",
-    "j"    : "00011",
-    "je"   : "00100",
-    "jne"  : "00101",
-    "jl"   : "00110",
-    "jg"   : "00111",
-    "addr" : "01000",
-    "addi" : "01001",
-    "subr" : "01010",
-    "subi" : "01011",
-    "mulr" : "01100",
-    "muli" : "01101",
-    "divr" : "01110",
-    "divi" : "01111",
+    "H"    : "00000",
+    "LI"   : "00001",
+    "LR"   : "00010",
+    "J"    : "00011",
+    "JE"   : "00100",
+    "JNE"  : "00101",
+    "JL"   : "00110",
+    "JG"   : "00111",
+    "ADDR" : "01000",
+    "ADDI" : "01001",
+    "SUBR" : "01010",
+    "SUBI" : "01011",
+    "MULR" : "01100",
+    "MULI" : "01101",
+    "DIVR" : "01110",
+    "DIVI" : "01111",
 }
 
 reg_codes = {
     "PC": "00000", 
-    "r0": "00001",
-    "r1": "00010",
-    "r2": "00011",
-    "r3": "00100",
-    "r4": "00101",
-    "r5": "00110",
-    "r6": "00111",
-    "r7": "01000",
+    "R0": "00001",
+    "R1": "00010",
+    "R2": "00011",
+    "R3": "00100",
+    "R4": "00101",
+    "R5": "00110",
+    "R6": "00111",
+    "R7": "01000",
 }
 
 if __name__ == "__main__":
 
     with open(sys.argv[1], "r") as sourcefile:
-        sourcecode = sourcefile.read().lower().strip()
+        sourcecode = sourcefile.read().strip()
 
     instructions = sourcecode.split("\n")
     outbuffer = []
 
     for line_num, line in enumerate(instructions):
         tokens = line.split()
-        opcode = tokens[0]
+        opcode = tokens[0].upper()  # Convert opcode to uppercase to match the dictionary
 
-        outbuffer.append(op_codes[opcode])
+        if opcode in op_codes:
+            outbuffer.append(op_codes[opcode])
+        else:
+            print(f"ERROR: unknown opcode \"{opcode}\", failed to assemble (line {line_num + 1})")
+            sys.exit(1)
         
         match opcode:
-            case "h": pass
+            case "H": 
+                pass
             
-            case "li":
+            case "LI":
                 if len(tokens) == 3:
-                    dest = tokens[1]
+                    dest = tokens[1].upper()  # Convert register to uppercase
                     outbuffer[line_num] += reg_codes[dest]
-            case "lr":
+            
+            case "LR":
                 if len(tokens) == 3:
-                    dest = tokens[1]
-                    reg = tokens[2]
+                    dest = tokens[1].upper()
+                    reg = tokens[2].upper()
                     outbuffer[line_num] += reg_codes[dest] + reg_codes[reg]
                     
-            case "j":
+            case "J": 
                 pass
-            case "je":
+            case "JE": 
                 pass
-            case "jne":
+            case "JNE": 
                 pass
-            case "jl":
+            case "JL": 
                 pass
-            case "jg":
+            case "JG": 
                 pass
-            case "addr":
+            case "ADDR": 
                 pass
-            case "addi":
+            case "ADDI": 
                 pass
-            case "subr":
+            case "SUBR": 
                 pass
-            case "subi":
+            case "SUBI": 
                 pass
-            case "mulr":
+            case "MULR": 
                 pass
-            case "muli":
+            case "MULI": 
                 pass
-            case "divr":
+            case "DIVR": 
                 pass
-            case "divi":
+            case "DIVI": 
                 pass
+            
             case _:
                 print(f"ERROR: unknown opcode \"{opcode}\", failed to assemble (line {line_num + 1})")
                 sys.exit(1)
 
     for line_num, line in enumerate(outbuffer):
-        print(f"(line {line_num + 1}): {line}")
+        print(f"(line {line_num + 1}): {line}: \"{instructions[line_num].upper()}\"")
+
+outfile = str()
+
+if len(sys.argv) > 2: 
+    outfile = sys.argv[2]
+else:
+    outfile = "as_out"
+
+with open(outfile, "w") as fb:
+    fb.write("".join(outbuffer))

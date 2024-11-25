@@ -52,17 +52,9 @@ reg_codes = {
 
 def int_to_le_32(num, sign) -> str: #turn regular int into a little endian s32 binary string
     # make sure number is valid s32 or u32
-    if sign:
-        if not (-2147483648 <= num <= 2147483647):
-            raise ValueError(f"{num} out of range for s32")
-    else:
-        if not (0 <= num <= 4294967295):
-            raise ValueError(f"{num} out of range for u32")
-    
-    little_endian_bytes = num.to_bytes(4, byteorder='little', signed=sign)
-    binary_string = ''.join(f'{byte:08b}' for byte in little_endian_bytes)
-    return binary_string
-
+    s32 = num.to_bytes(4, 'little', signed=True)
+    binary_representation = ''.join(f'{byte:08b}' for byte in s32)
+    return binary_representation
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:

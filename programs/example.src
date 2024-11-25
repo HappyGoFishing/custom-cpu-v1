@@ -1,4 +1,4 @@
-li r1 10
+li r1 -345
 li r2 11
 je 1 r1 r2
 h
